@@ -6,6 +6,9 @@ const resourceRoot = process.env.MRI_RESOURCE_ROOT
 if (!resourceRoot) throw new Error('MRI_RESOURCE_ROOT is required')
 const sources = ['shared/locale.lua'].map((file) => readFileSync(resolve(resourceRoot, file), 'utf8'))
 const lua = await createHarness({ resourceName: 'qbx_core', sources })
-const locale = await luaValue(lua, 'Locale ~= nil')
-if (locale !== true) throw new Error('qbx_core locale source did not load')
-console.log('qbx_core harness smoke passed')
+if (await luaValue(lua, 'Locale ~= nil') !== true) throw new Error('Locale global missing')
+await lua.doString("testLocale = Locale.new(nil, { warnOnMissing = false, phrases = { greeting = 'Hello %{name}' } })")
+if (await luaValue(lua, "testLocale:t('greeting', { name = 'MRI' })") !== 'Hello MRI') {
+    throw new Error('Locale substitution contract failed')
+}
+console.log('qbx_core harness smoke passed: Locale load and substitution')
