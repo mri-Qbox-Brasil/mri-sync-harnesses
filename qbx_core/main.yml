@@ -1,0 +1,14 @@
+version: 1
+runtime:
+  repo: mri-Qbox-Brasil/workflows
+  ref: main
+  package: '@mriqbox/fivem-test-harness'
+resource:
+  name: qbx_core
+  root: .
+sources:
+  - shared/locale.lua
+  - shared/main.lua
+schema: ''
+seed: ''
+specs: []
